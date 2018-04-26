@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import com.example.android.messages.Helper.ui.Dialogs;
 import com.example.android.messages.MessagesActivity;
 import com.example.android.messages.R;
 import com.philliphsu.bottomsheetpickers.time.grid.GridTimePickerDialog;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,19 +43,23 @@ public class SetupFragment extends android.support.v4.app.Fragment implements Gr
 
         View view = inflater.inflate(R.layout.setup_fragment_layout, null);
         mUnnbinder = ButterKnife.bind(this, view);
-        Drawable dr = getResources().getDrawable(R.drawable.frequence);
-        Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
-        Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
 
         ((MessagesActivity) getActivity()).hideFloatingActionButton();
 
-        mDailySyncBtn.setOnClickListener(new View.OnClickListener() {
+        mSyncFrequency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Dialogs.showNumberPickerDialog(getActivity(), "mesasage");
+                Dialogs.showNumberPickerDialog(getActivity(), "messasage");
             }
         });
 
+        mDailySyncBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setmTime();
+
+            }
+        });
         return view;
     }
 
@@ -67,6 +74,22 @@ public class SetupFragment extends android.support.v4.app.Fragment implements Gr
     public void onTimeSet(ViewGroup viewGroup, int hourOfDay, int minute) {
 
         mDailySyncText.setText("Daily sycn time set at : " + hourOfDay + " : " + minute);
+
+
+    }
+    public void setmTime() {
+        Calendar now = Calendar.getInstance();
+
+        GridTimePickerDialog grid = new GridTimePickerDialog.Builder(
+                this,
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                DateFormat.is24HourFormat(getActivity()))
+                /* ... Set additional options ... */
+                .build();
+        grid.show(getFragmentManager(), "");
+        grid.setHeaderColor(getResources().getColor(R.color.colorAccent));
+        grid.setAccentColor(getResources().getColor(R.color.colorAccent));
 
 
     }

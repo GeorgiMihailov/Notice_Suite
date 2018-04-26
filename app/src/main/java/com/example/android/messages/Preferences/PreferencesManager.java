@@ -9,6 +9,9 @@ import com.example.android.messages.Models.MsgModel;
 import com.example.android.messages.Models.TimeInfo;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 /**
  * Created by pc on 4/8/2018.
  */
@@ -61,5 +64,4 @@ public class PreferencesManager {
     public static MsgModel getUserInfo(Context context) {
         return new Gson().fromJson(getPreferences(context).getString("userInfo", ""), MsgModel.class);
     }
-
 }

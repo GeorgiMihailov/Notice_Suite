@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.messages.Api.RestApi;
@@ -50,9 +51,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder holder, int position) {
         MsgModel model = msgModel.get(position);
         holder.accNum.setText(model.getPhone_ID());
-        holder.msgTxt.setText(model.getNotice_text());
+
+        String text = model.getNotice_text();
+        text = text.replace("\n", "").replace("\r", "");
+        holder.msgTxt.setText(text);
         long sendAt = (model.getDatetime());
         String strLong = Long.toString(sendAt);
+        holder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.contact));
         }
 
     @Override
@@ -61,6 +66,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.acc_img)
+        ImageView img;
         @BindView(R.id.account_number)
         TextView accNum;
         @BindView(R.id.time_of_msg)

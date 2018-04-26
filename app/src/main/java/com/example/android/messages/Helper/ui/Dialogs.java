@@ -18,7 +18,7 @@ public class Dialogs {
     public static void showNumberPickerDialog(Activity activity, String msg){
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.setContentView(R.layout.number_picker_dialog);
 
 //        TextView text = (TextView) dialog.findViewById(R.id.text_dialog);

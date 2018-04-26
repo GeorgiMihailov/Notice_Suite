@@ -34,7 +34,9 @@ import com.philliphsu.bottomsheetpickers.date.DatePickerDialog;
 import com.philliphsu.bottomsheetpickers.time.BottomSheetTimePickerDialog;
 import com.philliphsu.bottomsheetpickers.time.grid.GridTimePickerDialog;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +54,10 @@ public class AddMessageFragment extends android.support.v4.app.Fragment implemen
     ImageButton mScheduleBtn;
     @BindView(R.id.send_btn)
     ImageButton mSendBtn;
+    @BindView(R.id.sendnowTXTVIEW)
+    TextView mSendNowTXT;
+    @BindView(R.id.scheduleTXTVIEW)
+    TextView mScheduleTXT;
     @BindView(R.id.date_and_time_txtView)
     TextView mDateTime;
     @BindView(R.id.phone_numer)
@@ -124,8 +130,8 @@ public class AddMessageFragment extends android.support.v4.app.Fragment implemen
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mPhoneNumber = mPhoneNumberEdittext.getText().toString();
                         mSmsTxt = mMsgTxtEdittext.getText().toString();
-
                         SmsManager.getDefault().sendTextMessage(mPhoneNumber, null, mSmsTxt, null, null);
+
                         mMsgTxtEdittext.setText("");
                         mPhoneNumberEdittext.setText("");
                         Toast.makeText(getActivity(), "Sms sent", Toast.LENGTH_SHORT).show();
@@ -169,7 +175,17 @@ public class AddMessageFragment extends android.support.v4.app.Fragment implemen
                 if (mMsgTxtEdittext.getText().length() > 0 && mPhoneNumberEdittext.getText().length() > 0) {
                     mScheduleBtn.setVisibility(View.VISIBLE);
                     mSendBtn.setVisibility(View.VISIBLE);
+                    mSendNowTXT.setVisibility(View.VISIBLE);
+                    mScheduleTXT.setVisibility(View.VISIBLE);
                 }
+                else if (mMsgTxtEdittext.getText().length() < 1 && mPhoneNumberEdittext.getText().length() < 1){
+                    mScheduleBtn.setVisibility(View.INVISIBLE);
+                    mSendBtn.setVisibility(View.INVISIBLE);
+                    mSendNowTXT.setVisibility(View.INVISIBLE);
+                    mScheduleTXT.setVisibility(View.INVISIBLE);
+
+                }
+
 
             }
         });
@@ -189,6 +205,15 @@ public class AddMessageFragment extends android.support.v4.app.Fragment implemen
                 if (mMsgTxtEdittext.getText().length() > 0 && mPhoneNumberEdittext.getText().length() > 0) {
                     mScheduleBtn.setVisibility(View.VISIBLE);
                     mSendBtn.setVisibility(View.VISIBLE);
+                    mSendNowTXT.setVisibility(View.VISIBLE);
+                    mScheduleTXT.setVisibility(View.VISIBLE);
+                }
+                else if (mMsgTxtEdittext.getText().length() < 1 && mPhoneNumberEdittext.getText().length() < 1){
+                    mScheduleBtn.setVisibility(View.INVISIBLE);
+                    mSendBtn.setVisibility(View.INVISIBLE);
+                    mSendNowTXT.setVisibility(View.INVISIBLE);
+                    mScheduleTXT.setVisibility(View.INVISIBLE);
+
                 }
 
             }
@@ -304,6 +329,8 @@ public class AddMessageFragment extends android.support.v4.app.Fragment implemen
     /* ... Set additional options ... */
                 .build();
         date.show(getFragmentManager(), "");
+        date.setHeaderColor(getResources().getColor(R.color.colorAccent));
+        date.setAccentColor(getResources().getColor(R.color.colorAccent));
         hourSet = cal.get(Calendar.HOUR_OF_DAY);
         minuteSet = cal.get(Calendar.MINUTE);
         // mText.setText("Time set: " + DateFormat.getTimeFormat(this).format(cal.getTime()));
@@ -318,7 +345,7 @@ public class AddMessageFragment extends android.support.v4.app.Fragment implemen
                 String[] phone = dataStringExtra.split(" ");
                 mPhoneNumberEdittext.setText(phone[phone.length - 1]);
             }
-            if (data.hasExtra("SEARCH_EXTRA")){
+            if (data.hasExtra("SEARCH_EXTRA")) {
                 String searchDate = data.getStringExtra("phoneNumberFromSearch");
                 mPhoneNumberEdittext.setText(searchDate);
             }

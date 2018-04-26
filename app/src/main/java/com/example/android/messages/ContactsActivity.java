@@ -12,13 +12,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
+
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.android.messages.Adapters.ContactsAdapter;
 
 import java.util.ArrayList;
 
@@ -50,6 +57,47 @@ public class ContactsActivity extends AppCompatActivity {
 
         setupSearchView();
 
+        mSearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Cursor contacts = getListOfContactNames(query);
+                String[] cursorColumns = {
+                        ContactsContract.CommonDataKinds.Phone.NUMBER };
+                int[] viewIds = {R.id.text1};
+
+                SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
+                        ContactsActivity.this,
+                        R.layout.list_item,
+                        contacts,
+                        cursorColumns,
+                        viewIds,
+                        0);
+
+                mListView.setAdapter(simpleCursorAdapter);
+                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView,
+                                            View view, int i, long l) {
+                        //get contact details and display
+                        TextView tv = view.findViewById(R.id.text1);
+                        Toast.makeText(ContactsActivity.this,
+                                "Selected Contact "+tv.getText(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Cursor contacts = getListOfContactNames(newText);
+                ContactsAdapter cursorAdapter = new ContactsAdapter
+                        (ContactsActivity.this, contacts, mSearchBar);
+                mSearchBar.setSuggestionsAdapter(cursorAdapter);
+                return true;
+            }
+        });
+
         mSearchBar.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionSelect(int position) {
@@ -64,6 +112,8 @@ public class ContactsActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
         pDialog = new ProgressDialog(ContactsActivity.this);
         pDialog.setMessage("Reading contacts...");
         pDialog.setCancelable(false);
@@ -291,5 +341,26 @@ public class ContactsActivity extends AppCompatActivity {
         SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
         searchView.setSearchableInfo(searchableInfo);
     }
+    public Cursor getListOfContactNames(String searchText) {
+
+        Cursor cur = null;
+        ContentResolver cr = getContentResolver();
+
+        String[] mProjection = {ContactsContract.Contacts._ID,
+                ContactsContract.Contacts.LOOKUP_KEY,
+                ContactsContract.Contacts.HAS_PHONE_NUMBER,
+                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY};
+
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+
+        String selection = ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " LIKE ?";
+        String[] selectionArgs = new String[]{"%"+searchText+"%"};
+
+        cur = cr.query(uri, mProjection, selection, selectionArgs, null);
+
+        return cur;
+    }
+
+
 
 }
